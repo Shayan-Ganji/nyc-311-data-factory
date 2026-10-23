@@ -118,7 +118,7 @@ class PopulationEnricher:
         work_df = df.copy()
 
         # Extract Month period (YYYY-MM)
-        work_df["month"] = pd.to_datetime(work_df["created_date_utc"]).dt.to_period("M").astype(str)
+        work_df["month"] = pd.to_datetime(work_df["created_date_utc"]).dt.strftime("%Y-%m")
 
         # Flag closed complaints
         work_df["is_closed"] = work_df["status"].astype(str).str.title() == "Closed"

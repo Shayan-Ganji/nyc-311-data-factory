@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "data_factory"
+version = "0.1.0"
+authors = [
+  { name="Shayan Ganji", email="ganshayan2@gmail.com" },
+]
+description = "Production-grade NYC 311 SODA Ingestion, Quarantine, and Curation Factory"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pandas==2.2.2",
+    "requests==2.32.5",
+    "numpy==2.0.2",
+    "matplotlib==3.10.5",
+    "seaborn==0.13.2",
+    "pyarrow==24.0.0",
+]
+
+[project.scripts]
+data-factory = "data_factory.cli:main"

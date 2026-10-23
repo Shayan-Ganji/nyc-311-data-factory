@@ -7,9 +7,28 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 
+def find_project_root() -> Path:
+    """
+    Dynamically locate repository root by walking up ancestors
+    until requirements.txt or pyproject.toml is found.
+    Defaults to current working directory if not found.
+    """
+    for p in [Path.cwd(), *Path.cwd().parents]:
+        if (p / "requirements.txt").exists() and (p / "src").exists():
+            return p
+    # Fallback checking file location
+    file_parent = Path(__file__).resolve().parent.parent.parent
+    if (file_parent / "requirements.txt").exists():
+        return file_parent
+    return Path.cwd()
+
+
 @dataclass(frozen=True)
 class PipelineConfig:
     """Immutable configuration container for pipeline execution."""
+
+    # Project Root
+    project_root: Path = field(default_factory=find_project_root)
 
     # Socrata SODA API
     soda_endpoint: str = "https://data.cityofnewyork.us/resource/erm2-nwe9.json"
@@ -32,22 +51,55 @@ class PipelineConfig:
     source_timezone: str = "America/New_York"
     target_timezone: str = "UTC"
 
-    # Storage Paths (all strictly relative to project root)
-    project_root: Path = field(default_factory=lambda: Path("."))
-    raw_dir: Path = field(default_factory=lambda: Path("data/raw"))
-    curated_dir: Path = field(default_factory=lambda: Path("data/curated"))
-    reference_dir: Path = field(default_factory=lambda: Path("data"))
+    # Directory Paths
+    @property
+    def raw_dir(self) -> Path:
+        return self.project_root / "data" / "raw"
+
+    @property
+    def curated_dir(self) -> Path:
+        return self.project_root / "data" / "curated"
+
+    @property
+    def reference_dir(self) -> Path:
+        return self.project_root / "data"
 
     # Specific File Paths
-    checkpoint_file: Path = field(default_factory=lambda: Path("data/raw/checkpoint.json"))
-    raw_storage_file: Path = field(default_factory=lambda: Path("data/raw/raw_ingested_records.jsonl"))
-    reference_population_file: Path = field(default_factory=lambda: Path("data/nyc_modzcta_population.json"))
-    curated_case_level_parquet: Path = field(default_factory=lambda: Path("data/curated/nyc_311_dot_curated.parquet"))
-    curated_case_level_csv: Path = field(default_factory=lambda: Path("data/curated/nyc_311_dot_curated.csv"))
-    curated_summary_parquet: Path = field(default_factory=lambda: Path("data/curated/borough_complaint_monthly_summary.parquet"))
-    curated_summary_csv: Path = field(default_factory=lambda: Path("data/curated/borough_complaint_monthly_summary.csv"))
-    quarantine_file: Path = field(default_factory=lambda: Path("data/curated/quarantine.jsonl"))
-    manifest_file: Path = field(default_factory=lambda: Path("data/curated/run_manifest.json"))
+    @property
+    def checkpoint_file(self) -> Path:
+        return self.raw_dir / "checkpoint.json"
+
+    @property
+    def raw_storage_file(self) -> Path:
+        return self.raw_dir / "raw_ingested_records.jsonl"
+
+    @property
+    def reference_population_file(self) -> Path:
+        return self.reference_dir / "nyc_modzcta_population.json"
+
+    @property
+    def curated_case_level_parquet(self) -> Path:
+        return self.curated_dir / "nyc_311_dot_curated.parquet"
+
+    @property
+    def curated_case_level_csv(self) -> Path:
+        return self.curated_dir / "nyc_311_dot_curated.csv"
+
+    @property
+    def curated_summary_parquet(self) -> Path:
+        return self.curated_dir / "borough_complaint_monthly_summary.parquet"
+
+    @property
+    def curated_summary_csv(self) -> Path:
+        return self.curated_dir / "borough_complaint_monthly_summary.csv"
+
+    @property
+    def quarantine_file(self) -> Path:
+        return self.curated_dir / "quarantine.jsonl"
+
+    @property
+    def manifest_file(self) -> Path:
+        return self.curated_dir / "run_manifest.json"
 
     def ensure_directories(self) -> None:
         """Create necessary data directory structure if it does not exist."""
