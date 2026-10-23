@@ -1,0 +1,62 @@
+{
+  "manifest_version": "1.0.0",
+  "execution_metadata": {
+    "started_at_utc": "2026-10-23T18:18:30.577754+00:00",
+    "completed_at_utc": "2026-10-23T18:19:52.119553+00:00",
+    "duration_seconds": 81.54,
+    "target_agency": "DOT",
+    "start_date": "2023-01-01T00:00:00.000",
+    "end_date": "2024-06-30T23:59:59.999"
+  },
+  "record_counts": {
+    "total_raw_ingested": 302457,
+    "total_valid_curated": 297899,
+    "total_quarantined": 4558,
+    "quarantine_rate": 0.01507,
+    "summary_table_rows": 3306
+  },
+  "quarantine_breakdown": {
+    "ERR_CLOSED_BEFORE_CREATED": 4455,
+    "ERR_MISSING_MANDATORY_FIELD": 0,
+    "ERR_CLOSED_WITHOUT_CLOSED_DATE": 103,
+    "ERR_INVALID_ZIP": 0,
+    "ERR_INVALID_COORDINATES": 0
+  },
+  "artifact_checksums": {
+    "case_level_parquet": {
+      "sink_type": "ParquetSink",
+      "path": "D:\\Lab\\term 3\\stage-1-shayan-ganji\\data\\curated\\nyc_311_dot_curated.parquet",
+      "record_count": 297899,
+      "size_bytes": 13998072,
+      "sha256": "535d0910c63df004dc7ff6f04b61ddb1fc77f26b42b684e4ec3b001ce90bcc55"
+    },
+    "case_level_csv": {
+      "sink_type": "CsvSink",
+      "path": "D:\\Lab\\term 3\\stage-1-shayan-ganji\\data\\curated\\nyc_311_dot_curated.csv",
+      "record_count": 297899,
+      "size_bytes": 113043516,
+      "sha256": "a6b6c9bf56532ba00b63d73ac2ffcecaaff42de1cf14fa71ecb9d0035e01e7d9"
+    },
+    "summary_table_parquet": {
+      "sink_type": "ParquetSink",
+      "path": "D:\\Lab\\term 3\\stage-1-shayan-ganji\\data\\curated\\borough_complaint_monthly_summary.parquet",
+      "record_count": 3306,
+      "size_bytes": 48650,
+      "sha256": "843e4e9cf423c10fc4a3be7a60d2ad2f05587a7e0f3e7e5c78828f5d8615fdc3"
+    },
+    "summary_table_csv": {
+      "sink_type": "CsvSink",
+      "path": "D:\\Lab\\term 3\\stage-1-shayan-ganji\\data\\curated\\borough_complaint_monthly_summary.csv",
+      "record_count": 3306,
+      "size_bytes": 204443,
+      "sha256": "ecb2b82f0d3b1cf57371b6945d223a242115ed3dc508fd9eed63da5d658a2cec"
+    },
+    "quarantine_log": {
+      "sink_type": "JsonlSink",
+      "path": "D:\\Lab\\term 3\\stage-1-shayan-ganji\\data\\curated\\quarantine.jsonl",
+      "record_count": 4558,
+      "size_bytes": 6465287,
+      "sha256": "3abec2d878356b0baa64b9c78a43573c4303c953d96cc3134fc7ea3a72eccf83"
+    }
+  }
+}
