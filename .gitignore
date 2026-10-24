@@ -16,6 +16,10 @@ env/
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints/
 
+# Large files exceeding GitHub 100MB limit (Parquet is preserved)
+data/curated/nyc_311_dot_curated.csv
+*.egg-info/
+
 # OS generated files
 .DS_Store
 Thumbs.db
