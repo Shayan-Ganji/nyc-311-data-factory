@@ -107,6 +107,28 @@ class TestSinksAndEnrichmentOffline(unittest.TestCase):
         self.assertEqual(manhattan_row["closed_complaints"], 2)
         self.assertEqual(manhattan_row["median_resolution_hours"], 15.0)
         self.assertGreater(manhattan_row["complaints_per_10k_residents"], 0)
+    def test_postgres_sink_contract_and_write(self) -> None:
+        """Test PostgresSink adapter writes data and finalizes with verified row count."""
+        from data_factory.sinks.postgres import PostgresSink
+
+        sink = PostgresSink(
+            connection_url="postgresql+psycopg2://postgres@127.0.0.1:5432/olist_db",
+            schema="nyc_311_test",
+            table_name="test_requests",
+            if_exists="replace",
+        )
+        test_df = pd.DataFrame({
+            "unique_key": ["101", "102", "103"],
+            "complaint_type": ["Pothole", "Signal", "Street"],
+            "value": [10.5, 20.0, 30.2],
+        })
+        sink.write_dataframe(test_df)
+        meta = sink.finalize()
+
+        self.assertEqual(meta["format"], "postgresql")
+        self.assertEqual(meta["schema"], "nyc_311_test")
+        self.assertEqual(meta["table"], "test_requests")
+        self.assertEqual(meta["record_count"], 3)
 
 
 if __name__ == "__main__":
