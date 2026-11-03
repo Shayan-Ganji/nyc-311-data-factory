@@ -33,6 +33,7 @@ class PostgresSink(BaseSink):
         self.if_exists = if_exists
         self.record_count = 0
         self.engine = create_engine(self.connection_url)
+        self._table_initialized = False
 
     def write_batch(self, records: list[dict[str, Any]]) -> None:
         """Persist a chunk of records by converting to DataFrame and streaming."""
@@ -49,19 +50,21 @@ class PostgresSink(BaseSink):
         if df.empty:
             return
 
-        # Ensure target schema exists
-        with self.engine.connect() as conn:
-            conn.execute(text(f"CREATE SCHEMA IF NOT EXISTS {self.schema};"))
-            conn.commit()
+        if not self._table_initialized:
+            # Ensure target schema exists
+            with self.engine.connect() as conn:
+                conn.execute(text(f"CREATE SCHEMA IF NOT EXISTS {self.schema};"))
+                conn.commit()
 
-        # Initialize table structure using SQLAlchemy type reflection on empty schema
-        df.head(0).to_sql(
-            name=self.table_name,
-            con=self.engine,
-            schema=self.schema,
-            if_exists=self.if_exists,
-            index=False,
-        )
+            # Initialize table structure using SQLAlchemy type reflection on empty schema
+            df.head(0).to_sql(
+                name=self.table_name,
+                con=self.engine,
+                schema=self.schema,
+                if_exists=self.if_exists,
+                index=False,
+            )
+            self._table_initialized = True
 
         raw_conn = self.engine.raw_connection()
         try:
